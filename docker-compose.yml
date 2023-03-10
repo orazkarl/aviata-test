@@ -1,0 +1,27 @@
+version: "3"
+services:
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+
+  provider-a:
+    build: provider-a
+    ports:
+      - "9001:9000"
+
+  provider-b:
+    build: provider-b
+    ports:
+      - "9002:9000"
+
+  airflow:
+    build: airflow
+    ports:
+      - "9000:9000"
+    depends_on:
+      - redis
+    environment:
+      REDIS_URL: "redis://redis:6379"
+      PROVIDER_A_URL: "http://provider-a:9000/search"
+      PROVIDER_B_URL: "http://provider-b:9000/search"
